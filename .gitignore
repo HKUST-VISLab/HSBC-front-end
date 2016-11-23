@@ -1,0 +1,12 @@
+.DS_Store
+.idea/
+build/
+config/
+node_modules/
+static/
+dist/
+test/
+
+npm-debug.log
+
+
