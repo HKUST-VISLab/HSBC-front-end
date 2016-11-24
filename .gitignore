@@ -4,7 +4,8 @@ node_modules/
 static/
 dist/
 test/
-
+*py
+*pyc
 npm-debug.log
 
 
