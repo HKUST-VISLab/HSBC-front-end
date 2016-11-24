@@ -1,6 +1,5 @@
 .DS_Store
 .idea/
-config/
 node_modules/
 static/
 dist/
