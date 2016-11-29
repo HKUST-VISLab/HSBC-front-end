@@ -31,14 +31,14 @@
 </template>cd
 
 <script>
-// import * as d3 from 'd3'
+// css
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.min.css';
-
-import BaseMap from './components/BaseMap/BaseMap.vue'
-import WindMap from './components/WindMap/WindMap.vue'
-
-import netservice from './service/netservice.js'
+import 'leaflet/dist/leaflet.css';
+// js
+import BaseMap from './components/BaseMap/BaseMap.vue';
+import WindMap from './components/WindMap/WindMap.vue';
+import netservice from './service/netservice.js';
 
 const ROOTPATH = '/'
 
