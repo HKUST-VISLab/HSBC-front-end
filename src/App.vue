@@ -34,7 +34,7 @@
 // css
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.min.css';
-import 'leaflet/dist/leaflet.css';
+
 // js
 import BaseMap from './components/BaseMap/BaseMap.vue';
 import WindMap from './components/WindMap/WindMap.vue';
@@ -102,7 +102,6 @@ export default {
     // }
   },
   components: {
-
     BaseMap,
     WindMap
   }
