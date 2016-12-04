@@ -1,35 +1,118 @@
 import * as d3 from 'd3'
 import vfsolver from '../../lib/vfsolver.js'
+import netservice from '../../service/netservice.js'
 
 export default {
   name: 'windmap',
+  timer: null,
   props: {
     height: Number,
     width: Number,
-    windConstraint: {
-      type: Array
+    stationLocation: Object
+  },
+  data () {
+    return {
+      vectorField: {},
+      canvasID: '#windmap',
+      windInfo: [],
+      windConstraint: [],
+      mapBounds:{topLeft: [0, 0], bottomRight: [0, 0]},
+      Lmap: null,
     }
   },
   watch: {
     // whenever question changes, this function will run
     height: function () {
       document.getElementById('windmap').height = this.height
+      // this.createWindMap(this.height, this.width, this.windConstraint, this.canvasID)
     },
     width: function () {
       document.getElementById('windmap').width = this.width
       // this.drawVectorField(this.height, this.width, this.vectorField, this.canvasID)
+      // this.createWindMap(this.height, this.width, this.windConstraint, this.canvasID)
+    },
+    windInfo: function () {
+      console.log('windInfo')
+      if (Object.keys(this.stationLocation).length === 0) return 
+      this.updateWindConstraint()
     },
     windConstraint: function () {
       this.createWindMap(this.height, this.width, this.windConstraint, this.canvasID)
     }
   },
-  data () {
-    return {
-      vectorField: {},
-      canvasID: '#windmap'
-    }
+  mounted: function () {
+    this.$nextTick(function () {
+      this.getWindInfo()
+      
+      this.$bus.$on('specialEvent', event => {
+        alert(event.alert);
+        console.log(event);
+      });
+      this.$bus.$on('LmapEvent', event => {
+        this.Lmap = event
+        console.log('this.Lmap: ', this.Lmap)
+        console.log('distance: ', this.Lmap.distance([1,2], [3, 4]))
+      })
+      this.$bus.$on('mapBoundsEvent', event => {
+        this.mapBounds.topLeft = [event._northEast.lat, event._southWest.lng]
+        this.mapBounds.bottomRight = [event._southWest.lat, event._northEast.lng]
+        console.log('mapBounds: ', this.mapBounds);
+        this.updateWindConstraint()
+      })
+
+      // setInterval(() => {
+      //   this.getWindInfo()
+      // }, 10000)
+    })
   },
   methods: {
+    getWindInfo () {
+      netservice.getWindInfo(responseData => {
+        if (responseData.status === 200) {
+          var tempData = JSON.parse(responseData.data)
+          var tempWindInfo = []
+          console.log('tempData length', tempData['records'].length)
+          for(var i=0; i<tempData['records'].length; i++){
+            if(tempData['records'][i]['has_wind']) {
+              var tempItem = {
+                'stn': tempData['records'][i]['stn'].toLowerCase(),
+                'winddirection': parseFloat(tempData['records'][i]['winddirection']),
+                'windspeed': parseFloat(tempData['records'][i]['windspeed'])
+              }
+              tempWindInfo.push(tempItem)
+            }
+          }
+          this.windInfo = tempWindInfo
+        }
+      })
+    },
+    getMapBounds () {
+    },
+    updateWindConstraint () {
+      // console.log('this.xScale', d3.scaleLinear())
+      // console.log('width: ', this.Lmap.distance(this.mapBounds.topLeft, [this.mapBounds.topLeft[0], this.mapBounds.bottomRight[1]]))
+      // console.log('height: ', this.Lmap.distance(this.mapBounds.topLeft, [this.mapBounds.bottomRight[0], this.mapBounds.topLeft[1]]))
+      var xScale = d3.scaleLinear().domain([0, this.Lmap.distance(this.mapBounds.topLeft, [this.mapBounds.topLeft[0], this.mapBounds.bottomRight[1]])]).range([0, this.width])
+      var yScale = d3.scaleLinear().domain([0, this.Lmap.distance(this.mapBounds.topLeft, [this.mapBounds.bottomRight[0], this.mapBounds.topLeft[1]])]).range([0, this.height])
+      // judge the range  and transform the data
+      var tempWindConstraint = []
+      for(var i=0; i<this.windInfo.length; i++){
+        if (this.stationLocation[this.windInfo[i].stn][0] < this.mapBounds.bottomRight[0]) continue
+        if (this.stationLocation[this.windInfo[i].stn][0] > this.mapBounds.topLeft[0]) continue
+        if (this.stationLocation[this.windInfo[i].stn][1] < this.mapBounds.topLeft[1]) continue
+        if (this.stationLocation[this.windInfo[i].stn][1] > this.mapBounds.bottomRight[1]) continue
+        // console.log(i, this.stationLocation[this.windInfo[i].stn])
+
+        var tempItem = {
+          x: xScale(this.Lmap.distance(this.mapBounds.topLeft, [this.mapBounds.topLeft[0], this.stationLocation[this.windInfo[i].stn][1]])),
+          y: yScale(this.Lmap.distance(this.mapBounds.topLeft, [this.stationLocation[this.windInfo[i].stn][0], this.mapBounds.topLeft[1]])),
+          vx: this.windInfo[i].windspeed * Math.sin(this.windInfo[i].winddirection * Math.PI/180),
+          vy: - this.windInfo[i].windspeed * Math.cos(this.windInfo[i].winddirection * Math.PI/180),
+        }
+        tempWindConstraint.push(tempItem)
+      }
+      this.windConstraint = tempWindConstraint
+    },
     createWindMap (height, width, windConstraint, canvasID) {
       var vectorField = this.genVectorField(height, width, windConstraint)
       this.vectorField = vectorField
@@ -37,8 +120,8 @@ export default {
     },
     genVectorField (height, width, windConstraint) {
       if(windConstraint.length === 0){
-        alert("No constraint!");
-        return null;
+        // alert("No constraint!");
+        return {};
       }
       // console.log("constraint:", windConstraint.length);
 
@@ -54,8 +137,11 @@ export default {
       return vectorField
     },
     drawVectorField (height, width, vectorField, canvasID) {
-      if(timer) {clearInterval(timer); }
-      d3.select(canvasID).node().getContext("2d").clearRect(0, 0, width, height);
+      if(Object.keys(vectorField).length === 0){
+        return null;
+      }
+      if(this.timer) {clearInterval(this.timer); }
+      d3.select(canvasID).node().getContext("2d").clearRect(0, 0, d3.select(canvasID).node().width, d3.select(canvasID).node().height);
       let self = this
       var step_h = 0.1, iter_nums = 400;
       // vector field data
@@ -104,7 +190,7 @@ export default {
       for (var i=0; i<M; i++) {age.push(randage());}
       var drawFlag = true;
       // setInterval(function () {if (drawFlag) {draw();}}, frameRate);
-      var timer = setInterval(function () {if (drawFlag) {draw();}}, frameRate);
+      this.timer = setInterval(function () {if (drawFlag) {draw();}}, frameRate);
       d3.select(canvasID)
         .on("click", function() {drawFlag = (drawFlag) ? false : true;});
       function randage() {

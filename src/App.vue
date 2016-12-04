@@ -24,11 +24,11 @@
     </nav>
     <div id="main">
       <base-map :height="height" :station-config="stationConfig"></base-map>
-      <wind-map :height="height" :width="width" :windConstraint="windConstraint"></wind-map>
+      <wind-map :height="height" :width="width" :stationLocation="stationLocation"></wind-map>
       <!--<hello></hello>-->
     </div>
   </div>
-</template>cd
+</template>
 
 <script>
 // css
@@ -51,9 +51,16 @@ export default {
       height: 0,
       width: 0,
       stationConfig: {},
-      windConstraint: []
+      stationLocation: {}
     }
   },
+  // watch: {
+  //   stationConfig: function () {
+  //     for(var i=0; i<this.stationConfig['Stations'].length; i++) {
+  //       this.stationLocation[this.stationConfig['Stations'][i]['StationCode'].toLowerCase()] = [parseFloat(this.stationConfig['Stations'][i]['latitude']), parseFloat(this.stationConfig['Stations'][i]['longitude'])]
+  //     }
+  //   }
+  // },
   mounted: function () {
     this.$nextTick(function () {
       this.initVariables()
@@ -64,10 +71,17 @@ export default {
   },
   methods: {
     initVariables () {
+      let self = this
       this.height = window.innerHeight - document.querySelector('.navbar').clientHeight
       this.width = window.innerWidth
-      document.getElementById('main').style.height = this.height + 'px'
+      // document.getElementById('main').height = this.height
 
+      window.onresize = function() {
+        self.height = window.innerHeight - document.querySelector('.navbar').clientHeight
+        self.width = window.innerWidth
+        console.log("this.height:", self.height)
+        console.log("this.width:", self.width)
+      }
       // d3.json(this.rawDataPath + 'full_station_config.json', (err, data) => {
       //   if (err) throw err
       //   this.stationConfig = data
@@ -82,6 +96,9 @@ export default {
       netservice.getStationConfig(responseData => {
         if (responseData.status === 200) {
           this.stationConfig = JSON.parse(responseData.data)
+          for(var i=0; i<this.stationConfig['Stations'].length; i++) {
+            this.stationLocation[this.stationConfig['Stations'][i]['StationCode'].toLowerCase()] = [parseFloat(this.stationConfig['Stations'][i]['latitude']), parseFloat(this.stationConfig['Stations'][i]['longitude'])]
+          }
         }
       })
     },
