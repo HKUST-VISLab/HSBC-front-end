@@ -68,15 +68,6 @@ export default {
       this.width = window.innerWidth
       document.getElementById('main').style.height = this.height + 'px'
 
-      // d3.json(this.rawDataPath + 'full_station_config.json', (err, data) => {
-      //   if (err) throw err
-      //   this.stationConfig = data
-      // })
-
-      // d3.json(this.rawDataPath + 'all_constraints_2.json', (err, data) => {
-      //   if (err) throw err
-      //   this.windConstraint = data
-      // })
     },
     getStationConfig () {
       netservice.getStationConfig(responseData => {
