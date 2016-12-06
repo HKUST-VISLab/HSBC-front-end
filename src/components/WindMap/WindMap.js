@@ -18,6 +18,7 @@ export default {
       windConstraint: [],
       mapBounds:{topLeft: [0, 0], bottomRight: [0, 0]},
       Lmap: null,
+      samplePointNum: 50
     }
   },
   watch: {
@@ -125,7 +126,7 @@ export default {
       }
       // console.log("constraint:", windConstraint.length);
 
-      var vfW = 32, vfH = 32;
+      var vfW = this.samplePointNum, vfH = this.samplePointNum;
       var vectorField = vfsolver.createField({
         width: vfW,
         height: vfH,
@@ -150,7 +151,7 @@ export default {
         X = [], Y = [], // to store current point for each curve
         xb = 1.5, yb = 1.3;
       //// curve ////
-      var N = 32, // 25^2 curves
+      var N = this.samplePointNum, // 25^2 curves
         // discretize the vfield coords
         xp = d3.range(N),
         yp = d3.range(N);
@@ -170,6 +171,10 @@ export default {
       // array of starting positions for each curve on a uniform grid
       for (var i = 0; i < N; i++) {
         for (var j = 0; j < N; j++) {
+          var velocity = self.vectorField.eval(xMap(xp[j]), yMap(yp[i]))
+          if (velocity[0]*velocity[0]+velocity[1]*velocity[1] < 8) continue
+          // if (self.vectorField.eval(X[i], Y[i]) < 1) continue
+          // console.log('vectorField.eval: ', self.vectorField.eval(X[i], Y[i]))
           X.push(xMap(xp[j])), Y.push(yMap(yp[i]));
           X0.push(xMap(xp[j])), Y0.push(yMap(yp[i]));
         }
