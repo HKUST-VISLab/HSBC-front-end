@@ -38,6 +38,15 @@ function getWindConstraint (callback) {
   })
 }
 
+function getWindInfo (callback) {
+  console.log('run here windinfo');
+  const url = `${devMainUrl}/windInfo`
+  $http.get(url).then(response => {
+    callback(response)
+  }, errResponse => {
+    console.log(errResponse)
+  })
+}
 // function getImages(imageFolder, imageNum, callback) {
 //     const url = `${devMainUrl}/${imageFolder}/${imageNum}`;
 //     $http.get(url).then(response => {
@@ -76,6 +85,6 @@ function getWindConstraint (callback) {
 export default {
   getWeatherData,
   getStationConfig,
-  getWindConstraint
-
+  getWindConstraint,
+  getWindInfo
 }
