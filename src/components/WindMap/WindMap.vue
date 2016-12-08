@@ -12,6 +12,6 @@
         margin-top: 50px;
         z-index: 1000;
         pointer-events: none;
-        opacity: 0.7;
+        opacity: 0.5;
     }
 </style>

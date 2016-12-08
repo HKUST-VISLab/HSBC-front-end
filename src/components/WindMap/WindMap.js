@@ -18,7 +18,7 @@ export default {
       windConstraint: [],
       mapBounds:{topLeft: [0, 0], bottomRight: [0, 0]},
       Lmap: null,
-      samplePointNum: 50
+      sampleNum: 50
     }
   },
   watch: {
@@ -126,7 +126,7 @@ export default {
       }
       // console.log("constraint:", windConstraint.length);
 
-      var vfW = this.samplePointNum, vfH = this.samplePointNum;
+      var vfW = this.sampleNum, vfH = this.sampleNum;
       var vectorField = vfsolver.createField({
         width: vfW,
         height: vfH,
@@ -151,11 +151,17 @@ export default {
         X = [], Y = [], // to store current point for each curve
         xb = 1.5, yb = 1.3;
       //// curve ////
-      var N = this.samplePointNum, // 25^2 curves
+      var N = this.sampleNum, // 25^2 curves
         // discretize the vfield coords
         xp = d3.range(N),
         yp = d3.range(N);
-
+      // var xp = [], yp = []
+      // for(var i=0; i<10; i++) {
+      //   xp.push(i+Math.random())
+      //   yp.push(i+Math.random())
+      // }
+      console.log('xp:', xp)
+      console.log('yp:', yp)
       //// mapping from vfield coords to web page coords
       // var width = this.width,
       //     height = this.height;
@@ -183,9 +189,10 @@ export default {
       // console.log('Y:', Y);
       var mw = 0, // if we want a margin
         ctx = d3.select(canvasID).node().getContext("2d"); // initialize a "canvas" element
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; // for fading curves
+      ctx.fillStyle = "rgba(0, 0, 255, 0.05)"; // for fading curves
       ctx.lineWidth = 0.7;
-      ctx.strokeStyle = "#FF8000"; // html color code
+      // ctx.strokeStyle = "#FF8000"; // html color code
+      ctx.strokeStyle = "#00FF00"; // html color code
       //// animation setup
       var animAge = 0,
         frameRate = 50, // ms per timestep (yeah I know it's not really a rate)
