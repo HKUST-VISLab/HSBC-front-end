@@ -22,13 +22,14 @@
         <!--/.nav-collapse -->
       </div>
     </nav>
+    <side-bar></side-bar>
     <div id="main">
       <base-map :height="height" :station-config="stationConfig"></base-map>
       <wind-map :height="height" :width="width" :windConstraint="windConstraint"></wind-map>
       <!--<hello></hello>-->
     </div>
   </div>
-</template>cd
+</template>
 
 <script>
 // css
@@ -39,6 +40,7 @@ import 'bootstrap/dist/css/bootstrap-theme.min.css';
 import BaseMap from './components/BaseMap/BaseMap.vue';
 import WindMap from './components/WindMap/WindMap.vue';
 import netservice from './service/netservice.js';
+import SideBar from './components/SideBar/SideBar.vue';
 
 const ROOTPATH = '/'
 
@@ -103,7 +105,8 @@ export default {
   },
   components: {
     BaseMap,
-    WindMap
+    WindMap,
+    SideBar
   }
 }
 </script>

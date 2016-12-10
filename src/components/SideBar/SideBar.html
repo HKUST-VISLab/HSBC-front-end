@@ -1,0 +1,13 @@
+<div id="sidebar" v-bind:class="status">
+  <ul id="sidebar-title" class="sidebar-nav">
+    <li class="sidebar-brand" v-bind:menu="menu"><a id="menu-toggle" :href="menu.ref">{{menu.text}}<span class="main-icon glyphicon glyphicon-align-justify" @click="toggleMenu"></span></a></li>
+  </ul>
+  <ul class="sidebar-nav" id="sidebar-items">
+    <li v-for="item in items" v-bind:item="item">
+      <a :href="item.ref">{{item.text}}
+        <span :class="item.style"></span>
+      </a>
+    </li>
+  </ul>
+</div>
+
