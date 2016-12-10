@@ -1,0 +1,96 @@
+// Variables
+$width: 200px;
+$hidden-width: 70px;
+
+#sidebar {
+  margin-left: -$width;
+  left: $width;
+  width: $width;
+  background: #222;
+  position: fixed;
+  height: 100%;
+  z-index: 10000;
+  transition: all .4s ease 0s;
+}
+
+.sidebar-nav {
+  display: block;
+  float: left;
+  width: $width;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  line-height: 40px;
+  text-indent: 20px;
+}
+
+#sidebar-title li a, .sidebar-nav li a {
+  color: #999;
+  display: block;
+  float: left;
+  text-decoration: none;
+  width: $width;
+  background: #252525;
+  border-top: 1px solid #373737;
+  border-bottom: 1px solid #1A1A1A;
+  -webkit-transition: background .5s;
+  -moz-transition: background .5s;
+  -o-transition: background .5s;
+  -ms-transition: background .5s;
+  transition: background .5s;
+}
+.sidebar_name {
+  padding-top: 25px;
+  color: #fff;
+  opacity: .7;
+}
+
+.sidebar-nav li a {
+  color: #999999;
+  display: block;
+  text-decoration: none;
+}
+
+.sidebar-nav li a:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.2);
+  text-decoration: none;
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+  text-decoration: none;
+}
+
+.sidebar-nav > .sidebar-brand {
+  height: 65px;
+  line-height: 60px;
+  font-size: 18px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+  color: #999999;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+  color: #fff;
+  background: none;
+}
+
+.main-icon
+{
+  float:right;
+  padding-right: 30px;
+  padding-top:20px;
+}
+.sub-icon
+{
+  float:right;
+  padding-right: 30px;
+  padding-top:10px;
+}
+
+#sidebar.inactive {
+  left: $hidden-width;
+}
+
