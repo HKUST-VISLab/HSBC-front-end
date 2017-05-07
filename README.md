@@ -1,5 +1,7 @@
 # hsbc-front-end
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/HKUST-VISLab/hsbc-front-end.svg)](https://greenkeeper.io/)
+
 > A Vue.js project
 
 ## Build Setup
